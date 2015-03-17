@@ -1,8 +1,38 @@
-# Analyzing Survey Data
+# Working With Dataframes in Python
+
+
+### Learning Objectives
+* Explain what a library is, and what libraries are used for.
+* Load a Python/pandas library and use the things it contains.
+* Read tabular data from a file into a program.
+* Assign values to variables.
+* Learn about data types
+* Select individual values and subsections from data.
+* Perform operations on arrays of data.
+* Display simple graphs.
+
+##About Libraries
+A library in Python, contains a set of tools (called functions) that perform tasks that we might want to complete on our data. Importing a library is like getting a piece of lab equipment out of a storage locker and setting it up on the bench for use in analysis. Once it's setup, the library can be used or called to perform many tasks for us.
+
+##Pandas in Python
+One of the best options for working with tabular data in python, is to use the [Python Data Analysis Library](http://pandas.pydata.org/) (a.k.a. pandas) library. The Pandas library provides data structures, produces high quality plots with [matplotlib](http://matplotlib.org/), and integrates nicely with other libraries that expect [NumPy](http://www.numpy.org/) arrays.
+
+Python doesn't load all of the libraries available to it by default. We have to add an import statement to our code prior to called the functions within the library first. To do this, we use the syntax `import` libraryName `as` nickNameHere you want.  
+
+
+```python
+import pandas as pd
+```
+
+In the example above, we have imported pandas as pd. `pd` a nice shortcut so we don't have to type out `pandas` each time we call a pandas function. Anytime we want to call a pandas function we can type `pd.FunctionName`
+
+
+##Lesson Overview
 
 We are studying the species and weight of animals caught in plots in our study area.
-The data sets are stored in .csv each row holds information for a single animal,
-and the columns represent record_id,month,day,year,plot,species,sex,wgt
+The data sets are stored in .csv (comma separated value) format. Within the `.csv` files, each row holds information for a single animal,
+and the columns represent: record_id, month, day, year, plot, species, sex, wgt. 
+
 The first few rows of our first file look like this:
 
 "63","8","19","1977","3","DM","M","40"
@@ -17,32 +47,15 @@ The first few rows of our first file look like this:
 
 ### We want to:
 
-* load that data into memory,
-* calculate the average weight of the animals across all animals, and
-* plot the result.
-To do all that, we'll have to learn a little bit about programming.
+1. Load that data into memory in Python,
+2. Calculate the average weight of the animals for all species.
+3. Plot the average weights by species ((IS THIS RIGHT??)
 
-### Objectives
-* Explain what a library is, and what libraries are used for.
-* Load a Python/pandas library and use the things it contains.
-* Read tabular data from a file into a program.
-* Assign values to variables.
-* Learn about data types
-* Select individual values and subsections from data.
-* Perform operations on arrays of data.
-* Display simple graphs.
+We can automate this process above, using Python programming! It's efficient to spend this time building the code to perform these tasks because once it's built, we can use it over and over on different datasets that use a similar format! This makes our methods easily reproducible.  
 
-## Loading Data
-----------------
 
-Words are useful, but what's more useful are the sentences and stories we use them to build.
-Similarly, while a lot of powerful tools are built into languages like Python,
-even more lives in the libraries they are used to build.
-Importing a library is like getting a piece of lab equipment out of a storage locker
-and setting it up on the bench.
-Once it's done, we can ask the library to do things for us.
-
-If someone want to use python for data analysis the best solution is to use [Python Data Analysis Library](http://pandas.pydata.org/) (a.k.a. pandas). It provides data structures, produces high quality plots with [matplotlib](http://matplotlib.org/), and integrates nicely with other libraries that expect [NumPy](http://www.numpy.org/) arrays.
+# DO WE NEED THIS IF THEY HAVE PANDAS INSTALLED? Should we check to see if pandas is installed.
+#also if they are using anaconda it might need to be conda install pandas. i think this belongs in the workshop overview.
 
 ### Installing pandas
 
@@ -60,21 +73,33 @@ To start working with pandas user should open ipython shell in folder with pytho
 [user@host:python]$ipython
 ```
 
-then import pandas library into python shell
+
+
+# Reading Data Using Pandas CSV
+We will begin by locating and reading our data. The data are in CSV format so we can use pandas' `read_csv` function to pull it directly into a [DataFrame](http://pandas.pydata.org/pandas-docs/stable/dsintro.html#dataframe). A dataframe is a 2-dimensional data structure that can store data of different types in columns. It is similar to spreadsheets or SQL tables or the `data.frame` in R. It can store a mix of data types, including characters, integers, floating point values, factors and more. 
+
+Let's begin by loading the `surveys.csv` file into python. 
+
+#DIRECTORIES NEED TO BE SET FOR THIS TO WORK PROPERLY -- I DID THIS IN SOFTWARE CARPENTRY _ SHOULD WE DO THIS HERE??
+
+First, let's make sure the python Pandas library is loaded. It's common practice to load the pandas library using the name `pd`. If we do that, then each time we use a pandas function, like read_csv, we will only have to type pd instead of the full name, pandas.
 
 ```python
-import pandas
+import pandas as pd
 ```
 
-Secondly, let's locate and read our data. Because it is in a CSV file, we can use pandas' `read_csv` function to pull it directly into a [DataFrame](http://pandas.pydata.org/pandas-docs/stable/dsintro.html#dataframe).
+Let's also import the OS library. This library will allow us to make sure we are in the correct working directory.
 
-### Variables
+	import OS
+	os.getcwd()
+	
 
 ```python
-pandas.read_csv("data/surveys.csv")
+#note the pd.read_csv is used because we imported pandas as pd
+pd.read_csv("data/biology/surveys.csv")
 ```
 
-which gives **output**:
+The above command yields the **output** below:
 
 ```
        record_id  month  day  year  plot species  sex  wgt
@@ -96,133 +121,14 @@ which gives **output**:
 [35549 rows x 8 columns]
 ```
 
-We could see, that there were 33549 rows parsed, each of them consisting 8 columns. Our call to `pandas.read_csv` read our file, but it haven't saved any data in memory. If we want that, we need to assign the data frame to a variable. A variable is just a name for a value, such as x, current_temperature, or subject_id. We can create a new variable simply by assigning a value to it using `=`. For example,
+
+Let's call the imported data `dat`: 
 
 ```python
-weight_kg = 55
+dat = pd.read_csv("data/surveys.csv")
 ```
 
-When we gave variable a value, we can print it:
-
-```python
-weight_kg
-```
-
-which gives **output**
-
-```
-55
-```
-
-and manipulate whit it, for example multiply it:
-
-```python
-3.5*weight_kg
-```
-
-which gives **output**
-
-```
-192.5
-```
-
-We can also change a variable's value by assigning it a new one and print out the information using 'print' to add text and values together:
-
-```python
-weight_kg = 52
-print "person lost some weight and now weights", weight_kg
-```
-
-which gives **output**
-
-```
-person lost some weight and now weights  52
-```
-
-If we imagine the variable as a sticky note with a name written on it, assignment is like putting the sticky note on a particular value. This means that assigning a value to one variable does not change the values of other variables. For example, let's store the animal's weight in pounds in a variable:
-
-```python
-weight_lb = 2.2 * weight_kg
-print "animal's weight in kilograms:", weight_kg, "and in pounds:", weight_lb
-```
-
-which gives **output**
-
-```
-animal's weight in kilograms: 52 and in pounds: 114.4
-```
-
-and then change variable weight_kg
-
-```python
-weight_kg = 80
-print "animal weight in kilograms:", weight_kg, "but in pounds is still", weight_lb
-```
-
-which gives **output**
-
-```
-animal's weight in kilograms: 80 but in pounds is still 114.4
-```
-
-#### Updating a Variable
-
-Since variable `weight_lb` doesn't "remember" where its value came from, it isn't automatically updated when variable `weight_kg` changes. This is different from the way spreadsheets work.
-
-#### Challenges
-
-Draw diagrams showing what variables refer to what values after each statement in the following commands:
-
-```python
-mass = 47.5
-age  = 122
-mass = mass * 2.0
-age  = age - 20
-```
-
-**What is your answer?**
-
-
-Variables also could be vectors or matricies.
-
-```python
-vector = [0,2.5]
-matrix = [[0,2],[0,1]]
-print "vector =", vector, "matrix =", matrix
-```
-
-which gives **output**
-
-```
-[0, 2.5] [[0, 2], [0, 1]]
-```
-
-
-
-Therefore, we can also add to variable that are vectors, and update them by making them longer. 
-For example, if we are creating a vector of animal weights, we could update that vector using its iternal `.append` method. 
-
-```print
-weights = [100]
-print weights
-weights.append(80)
-print weights
-```
-
-which gives **output**
-
-```
-[100]
-[100, 80]
-```
-
-Now we can save data readed from csv file into variable:
-
-```python
-dat = pandas.read_csv("data/surveys.csv")
-```
-
-This statement will not produce any output, becouse assignment doesn't display anything. If we want to print loaded data we can use just
+Notice when you assign the imported dataframe to a variable, python does not produce any output on the screen. We can print the `dat` object by typing in its name into the python command prompt.
 
 ```python
 dat
@@ -250,24 +156,30 @@ which gives **output**
 ...
 [35549 rows x 8 columns]
 ```
-#### Wrapping up before small break 
-* Everyone has imported the data?
-* How many rows and columns were imported?
-* What kind of data is it?
+
+We can figure out the type of object that dat is by typing:
+
+	type(dat)
+
+OUTPUT:
+
+	pandas.core.frame.DataFrame
 
 
+## Manipulating Our Species Survey Data
 
-## Manipulating data
-
-Now when we have our data in memory, we can start doing things with it. Firstly, we could check data type of variable `dat`
+Now we can start manipulating our data! First, let's check data type of object that `dat` is using the `type` command. The `type` function and `__class__` attribute tell us that `dat` is `<class 'pandas.core.frame.DataFrame'>` in Python. 
 
 ```python
 type(dat)
+#this does the same thing as the above!
 dat.__class__
-dat.dtypes
 ```
+We can also use the `dat.dtypes` command to view the data type within each column in our dataframe. 
 
-which gives **output**
+	dat.dtypes
+
+which gives **output**:
 
 ```
 record_id      int64
@@ -280,21 +192,20 @@ sex           object
 wgt          float64
 dtype: object
 ```
+#WE SHOULD SOMEHOW OVERVIEW WHAT ALL OF THESE THINGS ARE. 
 
+### Useful Ways to View DataFrame objects in Python
 
-The `type` function and `__class__` attribute tell us that `dat` is `<class 'pandas.core.frame.DataFrame'>` in Python. This is similar to a spradsheet in excel. The `dtypes` function tells us what columns there are  and what type they are.
-
-### DataFrame object
-
-DataFrame provides all possibilities of R's `data.frame` and  much more. It could store a mix of data types, e.g.characters, integers, facors. It has multiple methods which simplify access to data.
+There are multiple methods that can be used to summarize and access the data stored in dataframes. Let's try out a few. Note that we call the method by using the object name `dat.method`. So `dat.columns` provides an index of all of the column names in our dataframe. Try out some of the other methods below.  
 
 #### Useful methods
-* `.columns` - names of columns
-* `.head()` - displays 5 first rows
-* `.tail()` - displays 5 last rows
-* `.shape` - gives shape of  data in tuple (rows, columns)
+* `dat.columns` - names of columns
+* `dat.head()` - displays 5 first rows
+* `dat.tail()` - displays 5 last rows
+* `dat.shape` - gives shape of  data in tuple (rows, columns)
 
-### Indexing
+
+# Indexing in Python
 If we want to get a single value from the **DataFrame** object we must provide an index to it in square brackets and use iloc function.
 
 ```python
@@ -306,7 +217,7 @@ which gives **output**
 'F'
 ```
 
-You have to remeber that in Python indexing run from 0. Index like (2, 6) selects a single element of an array. We can also select whole sections as well. For example, we can select month, day and year (columns form second to fourth) of values for the first three rows(rows) like this:
+You have to remember that in Python indexing run from 0. Index like (2, 6) selects a single element of an array. We can also select whole sections as well. For example, we can select month, day and year (columns form second to fourth) of values for the first three rows(rows) like this:
 
 ```python
 dat.iloc[0:3, 1:4]
