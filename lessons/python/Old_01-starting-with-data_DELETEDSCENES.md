@@ -189,3 +189,17 @@ To start working with pandas user should open ipython shell in folder with pytho
 [user@host:python]$ipython
 ```
 
+
+## Statistics on subsets of data
+
+When analyzing data we often want to look at summary statistics, for subsets of our samples. For instance, we might want to look at the maximum weight per species or the average weight per plot.
+
+One way to do this is to select the data we want to create a new temporary DataFrame. Let's first build our query. Let's find records that are for the species "DO". To do this, we need to first build the query:  `dat.species == 'DO'`. Now, we need to find the rows in our dataFrame that contain DO. to do that we use the syntax `dat[dat.species == 'DO']`. Using this syntax, we are asking Python to pull out all rows where dat.species = DO. 
+
+```python
+a=dat[dat.species == 'DO']
+#find out how many individuals are of type 'DO'
+len(a)
+```
+
+The `len` function allows us to determine the length or number of entries that match the `species='DO'` criteria. 3027 individuals collected were of species 'DO'.
