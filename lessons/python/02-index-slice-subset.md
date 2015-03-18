@@ -135,10 +135,11 @@ Remember that Python indexing begins at 0. So, the index location [2, 6] selects
 
 1. What happens when you type:
 
+```python
 	surveys[0:3]
 	surveys[:5]
 	surveys[-1:]
-
+```
 
 
 

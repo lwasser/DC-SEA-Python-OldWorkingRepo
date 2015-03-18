@@ -1,6 +1,12 @@
 # Combining DataFrames with pandas
 
-In many "real world" situations, the data we want to use come in multiple files, which we usually load into memory as mutiple pandas DataFrames. However, since many analysis tools expect the data to be in a single DataFrame, we need ways of combining multiple DataFrames together. Fortunately, the pandas package provides [various methods for combining DataFrames](http://pandas.pydata.org/pandas-docs/stable/merging.html).
+In many "real world" situations, the data we want to use come in multiple files, which we usually load into memory as mutiple pandas DataFrames. However, since many analysis tools expect the data to be in a single DataFrame, we need ways of combining multiple DataFrames together. The pandas package provides [various methods for combining DataFrames](http://pandas.pydata.org/pandas-docs/stable/merging.html).
+
+
+#Learning Objectives
+* Learn how to concatenate two DataFrames together (append one dataFrame to a second dataFrame)
+* Learn how to join two DataFrames together using a uniqueID found in both DataFrames
+
 
 To work through the examples below, we first need to load the species and surveys files into pandas DataFrames. In iPython:
 
@@ -47,159 +53,156 @@ Out [5]:
 
 # Concatenating DataFrames
 
-**TODO**: added code and text explaning how to concatenate DataFrames using pandas (i.e., append as additional rows and columns without specific criteria)
+We can use the `concat` function in Pandas to append either columns or rows from one DataFrame to another.  
+
+	#read in first 10 lines of surveys table
+	surveySub = surveys_df.head(10)
+	#grab the last 10 rows (minus the last one)
+	surveySubLast10 = surveys_df[-10:-1]
+	
+
+When we concatenate DataFrames, we need to specify the axis. `axis=0` tells Pandas to stack the second DataFrame under the first one. It will automatically detect whether the column names are the same and will stack accordingly. `axis=0` will stack the columns in the second DataFrame to the RIGHT of the first DataFrame
+
+	#stack the DataFrames on top of each other
+	pd.concat([surveySub, surveySubLast10], axis=0)
+	#Place the DataFrames side by side
+	pd.concat([surveySub, surveySubLast10], axis=1)
+
 
 
 # Joining DataFrames
 
-One common way of combining DataFrames is based on common values in one or more columns. The process of combining DataFrames in this way is called "joining", and the columns containing the common values are called "join key(s)".  Joining DataFrames in this way is often useful when one DataFrame is a "lookup table" containing additional data that we want to include in the other.
+One common way to combine DataFrames is to use columns in each dataset that contain common values. The process of combining DataFrames in this way is called "joining", and the columns containing the common values are called "join key(s)".  Joining DataFrames in this way is often useful when one DataFrame is a "lookup table" containing additional data that we want to include in the other. 
 
-In this example, "species_df" is the lookup table containing genus, species, and taxa names that we want to join with the data in "survey_df" to produce a new DataFrame that contains all the columns from both "species_df" *and* "survey_df".
+NOTE: This process of joining tables is similar to what we do with tables in SQL!
+
+To better understand joins, let's grab the first 10 lines of our data as a subset to work with. We'll use the `.head` attribute to do this. We'll also read in a subset of the species table. 
+
+	#read in first 10 lines of surveys table
+	surveySub = surveys_df.head(10)
+	
+	speciesSub = pd.read_csv('data/biology/speciesSubset.csv', keep_default_na=False, na_values=[""])
+
+In this example, "speciesSub" is the lookup table containing genus, species, and taxa names that we want to join with the data in "surveySub" to produce a new DataFrame that contains all the columns from both "species_df" *and* "survey_df".
 
 
 ## Identifying join keys
 
-Identifying appropriate join keys requires enough knowledge of the dataset to know which field(s) are shared between the files (DataFrames) and inspecting the actual DataFrames to identify the columns that contain those names. If we are lucky, both DataFrames will have columns with the same name that also contain the same data. If we are less lucky, we need to identify a (differently-named) column in each DataFrame that contains the same information.
+To identify appropriate join keys we first need to know which field(s) are shared between the files (DataFrames). We might inspect both DataFrames to identify these columns. If we are lucky, both DataFrames will have columns with the same name that also contain the same data. If we are less lucky, we need to identify a (differently-named) column in each DataFrame that contains the same information.
 
-In our example, the join key is the column containing the two-letter species identifer, which is called `species` in `surveys_df` and `species_id` in `species_df`.
+```python
+	speciesSub.columns
+	surveySub.columns
+```
+
+In our example, the join key is the column containing the two-letter species identifier, which is called `species` in `surveys_df` and `species_id` in `species_df`.
 
 
 ## Inner joins
 
-Probably the most common type of join is called an _inner join_. An inner join combines two DataFrames based on a join key and returns a new DataFrame that contains only those rows that have matching values in *both* of the original DataFrames.
+There are [different types of joins.](http://blog.codinghorror.com/a-visual-explanation-of-sql-joins/).
 
-To give a concrete example, the result of an inner join of `surveys_df` and `species_df` is a new DataFrame that contains the combined set of columns from `surveys_df` and `species_df` but *only* those rows that have matching two-letter species codes in both. In other words, if a row in `surveys_df` has a value of `species` that does *not* appear in the `species_id` column of `species`, it will not be included in the DataFrame returned by an inner join.  Similarly, if a row in `species_df` has a value of `species_id` that does *not* appear in the `species` column of `surverys_df`, that row will not be included in the DataFrame returned by an inner join.
+The most common type of join is called an _inner join_. An inner join combines two DataFrames based on a join key and returns a new DataFrame that contains only those rows that have matching values in *both* of the original DataFrames.
+
 
 The pandas function for performing joins is called `merge` and is invoked as follows:
 
 ```python
-In  [6]: merged_inner = pd.merge(left=surveys_df, right=species_df, left_on='species', right_on='species_id')
+	merged_inner = pd.merge(left=surveys_df, right=species_df, left_on='species', right_on='species_id')
 
-In  [7]: merged_inner
-Out [7]:
-       record_id  month  day  year  plot species_x  sex  wgt species_id  \
-0              1      7   16  1977     2        NA    M  NaN         NA   
-1              2      7   16  1977     3        NA    M  NaN         NA   
-2             22      7   17  1977    15        NA    F  NaN         NA   
-3             38      7   17  1977    17        NA    M  NaN         NA   
-4             72      8   19  1977     2        NA    M  NaN         NA   
-...          ...    ...  ...   ...   ...       ...  ...  ...        ...   
-34781      28988     12   23  1998     6        CT  NaN  NaN         CT   
-34782      35512     12   31  2002    11        US  NaN  NaN         US   
-34783      35513     12   31  2002    11        US  NaN  NaN         US   
-34784      35528     12   31  2002    13        US  NaN  NaN         US   
-34785      35544     12   31  2002    15        US  NaN  NaN         US   
-
-               genus species_y     taxa  
-0            Neotoma  albigula   Rodent  
-1            Neotoma  albigula   Rodent  
-2            Neotoma  albigula   Rodent  
-3            Neotoma  albigula   Rodent  
-4            Neotoma  albigula   Rodent  
-...              ...       ...      ...  
-34781  Cnemidophorus    tigris  Reptile  
-34782        Sparrow       sp.     Bird  
-34783        Sparrow       sp.     Bird  
-34784        Sparrow       sp.     Bird  
-34785        Sparrow       sp.     Bird  
-
-[34786 rows x 12 columns]
+	merged_inner
+	#what's the size of the output data?
+	merged_inner.shape
+	merged_inner
 ```
+
+**OUTPUT:**
+
+ 	record_id 	month 	day 	year 	plot 	species_x 	sex 	wgt 	species_id 	genus 	species_y 	taxa
+0 	1 	7 	16 	1977 	2 	NL 	M 	NaN 	NL 	Neotoma 	albigula 	Rodent
+1 	2 	7 	16 	1977 	3 	NL 	M 	NaN 	NL 	Neotoma 	albigula 	Rodent
+2 	3 	7 	16 	1977 	2 	DM 	F 	NaN 	DM 	Dipodomys 	merriami 	Rodent
+3 	4 	7 	16 	1977 	7 	DM 	M 	NaN 	DM 	Dipodomys 	merriami 	Rodent
+4 	5 	7 	16 	1977 	3 	DM 	M 	NaN 	DM 	Dipodomys 	merriami 	Rodent
+5 	8 	7 	16 	1977 	1 	DM 	M 	NaN 	DM 	Dipodomys 	merriami 	Rodent
+6 	9 	7 	16 	1977 	1 	DM 	F 	NaN 	DM 	Dipodomys 	merriami 	Rodent
+7 	7 	7 	16 	1977 	2 	PE 	F 	NaN 	PE 	Peromyscus 	eremicus 	Rodent
+
+
+	
+
+Inner joins yield a DataFrame that contains only rows where the value being joins exists in BOTH tables. An example of an inner join, adapted from [this page](http://blog.codinghorror.com/a-visual-explanation-of-sql-joins/) is below:
+
+![Inner join -- courtesy of codinghorror.com](http://blog.codinghorror.com/content/images/uploads/2007/10/6a0120a85dcdae970b012877702708970c-pi.png)
+
+The result of an inner join of `surveySub` and `speciesSub` is a new DataFrame that contains the combined set of columns from `surveySub` and `speciesSub` but *only* those rows that have matching two-letter species codes in both. In other words, if a row in `surveySub` has a value of `species` that does *not* appear in the `species_id` column of `species`, it will not be included in the DataFrame returned by an inner join.  Similarly, if a row in `speciesSub` has a value of `species_id` that does *not* appear in the `species` column of `surveySub`, that row will not be included in the DataFrame returned by an inner join.
 
 The two DataFrames we want to join are passed to the `merge` function using the `left` and `right` argument; for inner joins, which DataFrame is passed using the `left` argument and which is passed using `right` does not matter.
 
-The `left_on='species'` argument tells `merge` to use the `species` column as the join key from `surveys_df` (the `left` DataFrame). Similarly , the `right_on='species_id'` argument tells `merge` to use the `species_id` column as the join key from `species_df` (the `right` DataFrame).
+The `left_on='species'` argument tells `merge` to use the `species` column as the join key from `surveySub` (the `left` DataFrame). Similarly , the `right_on='species_id'` argument tells `merge` to use the `species_id` column as the join key from `speciesSub` (the `right` DataFrame).
 
-The result `merged_inner` DataFrame contains all the columns from `surveys_df` (record id, month, day, etc.) as well as all the columns from `species_df` (species id, genus, species, and taxa). Because both original DataFrames contain a column named `species`, pandas automatically appends a `_x` to the column name from the `left` DataFrame and a `_y` to the column name from the `right` DataFrame.
+The result `merged_inner` DataFrame contains all the columns from `surveySub` (record id, month, day, etc.) as well as all the columns from `speciesSub` (species id, genus, species, and taxa). Because both original DataFrames contain a column named `species`, pandas automatically appends a `_x` to the column name from the `left` DataFrame and a `_y` to the column name from the `right` DataFrame.
 
 Notice that `merged_inner` has fewer rows than `surveys_df`. This is an indication that there were rows in `surveys_df` with value(s) for `species` that do not exist as value(s) for `species_id` in `species_df`.
 
 
 ## Left joins
 
-What if we want to add information from `species_df` to `surveys_df` without losing any of the information from `surveys_df`? In this case, we use a different type of join called a "left outer join", or more briefly, a "left join".
+What if we want to add information from `speciesSub` to `surveysSub` without losing any of the information from `surveySub`? In this case, we use a different type of join called a "left outer join", or more briefly, a "left join".
 
 Like an inner join, a left join uses join keys to combine two DataFrames. Unlike an inner join, a left join will return *all* the rows from the `left` DataFrame, even those rows whose join key(s) do not have values in the `right` DataFrame.  Rows in the `left` DataFrame that are missing values for the join key(s) in the `right` DataFrame will simply have null (i.e., NaN or None) values for those columns in the resulting joined DataFrame.
 
 Note: a left join will still discard rows from the `right` DataFrame that do not have values for the join key(s) in the `left` DataFrame.
 
+![Left Join](http://blog.codinghorror.com/content/images/uploads/2007/10/6a0120a85dcdae970b01287770273e970c-pi.png)
+
 A left join is performed in pandas by calling the same `merge` function used for inner join, but using the `how='left'` argument:
 
 ```python
-In  [8]: merged_left = pd.merge(left=surveys_df, right=species_df, how='left', left_on='species', right_on='species_id')
+merged_left = pd.merge(left=surveys_df, right=species_df, how='left', left_on='species', right_on='species_id')
 
-In  [9]: merged_left
-Out [9]:
-       record_id  month  day  year  plot species_x  sex  wgt species_id  \
-0              1      7   16  1977     2        NA    M  NaN         NA   
-1              2      7   16  1977     3        NA    M  NaN         NA   
-2             22      7   17  1977    15        NA    F  NaN         NA   
-3             38      7   17  1977    17        NA    M  NaN         NA   
-4             72      8   19  1977     2        NA    M  NaN         NA   
-...          ...    ...  ...   ...   ...       ...  ...  ...        ...   
-35544      28988     12   23  1998     6        CT  NaN  NaN         CT   
-35545      35512     12   31  2002    11        US  NaN  NaN         US   
-35546      35513     12   31  2002    11        US  NaN  NaN         US   
-35547      35528     12   31  2002    13        US  NaN  NaN         US   
-35548      35544     12   31  2002    15        US  NaN  NaN         US   
+merged_left
 
-               genus species_y     taxa  
-0            Neotoma  albigula   Rodent  
-1            Neotoma  albigula   Rodent  
-2            Neotoma  albigula   Rodent  
-3            Neotoma  albigula   Rodent  
-4            Neotoma  albigula   Rodent  
-...              ...       ...      ...  
-35544  Cnemidophorus    tigris  Reptile  
-35545        Sparrow       sp.     Bird  
-35546        Sparrow       sp.     Bird  
-35547        Sparrow       sp.     Bird  
-35548        Sparrow       sp.     Bird  
-
-[35549 rows x 12 columns]
+OUTPUT: 
+ 	record_id 	month 	day 	year 	plot 	species_x 	sex 	wgt 	species_id 	genus 	species_y 	taxa
+0 	1 	7 	16 	1977 	2 	NL 	M 	NaN 	NL 	Neotoma 	albigula 	Rodent
+1 	2 	7 	16 	1977 	3 	NL 	M 	NaN 	NL 	Neotoma 	albigula 	Rodent
+2 	3 	7 	16 	1977 	2 	DM 	F 	NaN 	DM 	Dipodomys 	merriami 	Rodent
+3 	4 	7 	16 	1977 	7 	DM 	M 	NaN 	DM 	Dipodomys 	merriami 	Rodent
+4 	5 	7 	16 	1977 	3 	DM 	M 	NaN 	DM 	Dipodomys 	merriami 	Rodent
+5 	8 	7 	16 	1977 	1 	DM 	M 	NaN 	DM 	Dipodomys 	merriami 	Rodent
+6 	9 	7 	16 	1977 	1 	DM 	F 	NaN 	DM 	Dipodomys 	merriami 	Rodent
+7 	6 	7 	16 	1977 	1 	PF 	M 	NaN 	NaN 	NaN 	NaN 	NaN
+8 	10 	7 	16 	1977 	6 	PF 	F 	NaN 	NaN 	NaN 	NaN 	NaN
+9 	7 	7 	16 	1977 	2 	PE 	F 	NaN 	PE 	Peromyscus 	eremicus 	Rodent
 ```
 
-The result DataFrame from a left join (`merged_left`) looks very much like the result DataFrame from an inner join (`merged_inner`) in terms of the columns it contains. However, unlike `merged_inner`, `merged_left` contains the same number of rows as the original `surveys_df` DataFrame. When we inspect `merged_left`, we find there are rows where the information that should have come from `species_df` (i.e., `species_id`, `genus`, `species_y`, and `taxa`) is missing:
+The result DataFrame from a left join (`merged_left`) looks very much like the result DataFrame from an inner join (`merged_inner`) in terms of the columns it contains. However, unlike `merged_inner`, `merged_left` contains the **same number of rows** as the original `surveysSub` DataFrame. When we inspect `merged_left`, we find there are rows where the information that should have come from `speciesSub` (i.e., `species_id`, `genus`, `species_y`, and `taxa`) is missing (they contain NaN values):
 
 ```python
-In [10]: merged_left[ pd.isnull(merged_left.species_id) ]
-Out[10]:
-       record_id  month  day  year  plot species_x  sex  wgt species_id genus  \
-29669        324     10   17  1977     7       NaN  NaN  NaN        NaN   NaN   
-29670        325     10   17  1977    10       NaN  NaN  NaN        NaN   NaN   
-29671        326     10   17  1977    23       NaN  NaN  NaN        NaN   NaN   
-29672        401     11   13  1977     3       NaN  NaN  NaN        NaN   NaN   
-29673        402     11   13  1977    15       NaN  NaN  NaN        NaN   NaN   
-...          ...    ...  ...   ...   ...       ...  ...  ...        ...   ...   
-30427      34757      9   10  2002    23       NaN  NaN  NaN        NaN   NaN   
-30428      34970     10    6  2002    10       NaN  NaN  NaN        NaN   NaN   
-30429      35188     11   10  2002    10       NaN  NaN  NaN        NaN   NaN   
-30430      35385     12    8  2002    10       NaN  NaN  NaN        NaN   NaN   
-30431      35549     12   31  2002     5       NaN  NaN  NaN        NaN   NaN   
-
-      species_y taxa  
-29669       NaN  NaN  
-29670       NaN  NaN  
-29671       NaN  NaN  
-29672       NaN  NaN  
-29673       NaN  NaN  
-...         ...  ...  
-30427       NaN  NaN  
-30428       NaN  NaN  
-30429       NaN  NaN  
-30430       NaN  NaN  
-30431       NaN  NaN  
-
-[763 rows x 12 columns]
+	merged_left[ pd.isnull(merged_left.species_id) ]
+	#Output: 
+ 	record_id 	month 	day 	year 	plot 	species_x 	sex 	wgt 	species_id 	genus 	species_y 	taxa
+7 	6 	7 	16 	1977 	1 	PF 	M 	NaN 	NaN 	NaN 	NaN 	NaN
+8 	10 	7 	16 	1977 	6 	PF 	F 	NaN 	NaN 	NaN 	NaN 	NaN
 ```
 
-These rows are the ones where the value of `species` from `surveys_df` (in this case, `NaN`) does not occur in `species_df`.
+These rows are the ones where the value of `species` from `surveySub` (in this case, `NaN`) does not occur in `speciesSub`.
 
 
 ## Other joins types
 
 The pandas `merge` function supports two other join types:
 
-* Right (outer) join: Invoked by passing `how='right'` as an arguement. Similar to a left join, except *all* rows from the `right` DataFrame are kept, while rows from the `left` DataFrame without matching join key(s) values are discarded.
+* Right (outer) join: Invoked by passing `how='right'` as an argument. Similar to a left join, except *all* rows from the `right` DataFrame are kept, while rows from the `left` DataFrame without matching join key(s) values are discarded.
 
 * Full (outer) join: Invoked by passing `how='outer'` as an argument. This join type returns the all pairwise combinations of rows from both DataFrames; i.e., the result DataFrame will contain rows `(left_1, right_1)`, `(left_1, right_2)`, `(left_2, right_1)`, `(left_2, right_2)`, etc. This join type is very rarely used.
+
+#Challenge
+Create a new DataFrame by joining the contents of the surveys.csv and species.csv tables. Then calculate and plot the distribution of  
+
+1. taxa by plot 
+2. taxa by sex by plot  
+
+
+# WOULD LIKE TO COME UP WIHT A FEW OTHER CHALLENGE ACTIVITIES

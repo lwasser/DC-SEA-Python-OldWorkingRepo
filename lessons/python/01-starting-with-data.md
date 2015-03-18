@@ -373,9 +373,9 @@ dat['wgt'].count()
 
 
 #Summary Plotting Challenge
-Here is some beta to help you solve this challenge:
+For your summary lesson challenge, create a stacked bar plot, with weight on the Y axis, and the stacked variables being sex. Here is some beta to help you solve this challenge:
 
-* You can use the command `unstack` to transform grouped data into columns for each plotting. Try the code, `dat.unstack' to see what it yields. 
+* [For more on Pandas Plots, visit this link.](http://pandas.pydata.org/pandas-docs/dev/generated/pandas.core.groupby.DataFrameGroupBy.plot.html)
 * You can use the code that follows to create a stacked bar plot but the data need to be in individual columns like this where each value is a mean weight. The first column represents the plot number and the second and third columns represent the sex. like this:
 
  	wgt
@@ -388,7 +388,8 @@ plot
 	my_plot.set_xlabel("Plot")
 	my_plot.set_ylabel("Weight")
 	
-Using the skills we just learned in this activity, creat a stacked bar plot. [For more on Pandas Plots, visit this link.](http://pandas.pydata.org/pandas-docs/dev/generated/pandas.core.groupby.DataFrameGroupBy.plot.html)
+
+** You can use the command `unstack` to transform grouped data into columns for each plotting. Try the code, `dat.unstack' to see what it yields. 
 
 ![Stacked Bar Plot](images/stackedBar.png)
 
