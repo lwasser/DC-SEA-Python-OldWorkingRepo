@@ -16,21 +16,21 @@
 A library in Python, contains a set of tools (called functions) that perform tasks on our data. Importing a library is like getting a piece of lab equipment out of a storage locker and setting it up on the bench for use in a project. Once a library is setup, it can be used or called to perform many tasks.
 
 ##Pandas in Python
-One of the best options for working with tabular data in python is to use the [Python Data Analysis Library](http://pandas.pydata.org/) (a.k.a. pandas) library. The Pandas library provides data structures, produces high quality plots with [matplotlib](http://matplotlib.org/), and integrates nicely with other libraries that expect [NumPy](http://www.numpy.org/) arrays.
+One of the best options for working with tabular data in python is to use the [Python Data Analysis Library](http://pandas.pydata.org/) (a.k.a. pandas). The Pandas library provides data structures, produces high quality plots with [matplotlib](http://matplotlib.org/), and integrates nicely with other libraries that expect [NumPy](http://www.numpy.org/) arrays.
 
-Python doesn't load all of the libraries available to it by default. We have to add an import statement to our code in order to use library functions. To import a library, we use the syntax `import` libraryName. If we want to give the library a nickname to shorted the command, we can add `as nickNameHere`.  An example of importing the pandas library using the common nickname `pd` is below.
+Python doesn't load all of the libraries available to it by default. We have to add an import statement to our code in order to use library functions. To import a library, we use the syntax `import libraryName`. If we want to give the library a nickname to shorted the command, we can add `as nickNameHere`.  An example of importing the pandas library using the common nickname `pd` is below.
 
 
 ```python
 import pandas as pd
 ```
 
-In the example above, we have imported pandas as pd. `pd` a nice shortcut so we don't have to type out `pandas` each time we call a pandas function. Anytime we want to call a pandas function we can type `pd.FunctionName` instead of `Pandas.FunctionName`.
+In the example above, we have imported pandas as pd. `pd` is a nice nickname so we don't have to type out `pandas` each time we call a pandas function. Anytime we want to call a pandas function we can type `pd.FunctionName` instead of `Pandas.FunctionName`.
 
 
 ##Lesson Overview
 
-We are studying the species and weight of animals caught in plots in our study area.
+Now that we've gotten libraries out of the way, let's dig into some data. We are studying the species and weight of animals caught in plots in a study area.
 The data sets are stored in .csv (comma separated value) format. Within the `.csv` files, each row holds information for a single animal,
 and the columns represent: record_id, month, day, year, plot, species, sex, wgt. 
 
@@ -50,9 +50,9 @@ The first few rows of our first file look like this:
 
 1. Load that data into memory in Python,
 2. Calculate the average weight of the animals for all species.
-3. Plot the average weights by species ((IS THIS RIGHT??)
+3. Plot the average weights by species and perhaps by plot too.
 
-We can automate this process above, using Python programming! It's efficient to spend this time building the code to perform these tasks because once it's built, we can use it over and over on different datasets that use a similar format! This makes our methods easily reproducible.  
+We can automate the process above, using Python programming. It's efficient to spend this time building the code to perform these tasks because once it's built, we can use it over and over on different datasets that use a similar format. This makes our methods easily reproducible.  We can also easily share our code with colleagues and they can replicate the same analysis.
 
 # Reading Data Using Pandas CSV
 We will begin by locating and reading our survey data. The data are in CSV format. We can use Pandas `read_csv` function to pull the file directly into a [DataFrame](http://pandas.pydata.org/pandas-docs/stable/dsintro.html#dataframe). 
@@ -62,21 +62,20 @@ A dataframe is a 2-dimensional data structure that can store data of different t
 
 Let's read the `surveys.csv` file into a python Pandas DataFrame. 
 
-#DIRECTORIES NEED TO BE SET FOR THIS TO WORK PROPERLY -- I DID THIS IN SOFTWARE CARPENTRY _ SHOULD WE DO THIS HERE??
-
-First, let's make sure the python Pandas library is loaded. We will import Pandas using the nickname `pd`. Each time we use a pandas function, like `read_csv`, we will only have to type pd instead of the full name, pandas.
+First, let's make sure the python Pandas library is loaded. We will import Pandas using the nickname `pd`. Each time we use a pandas function, like `read_csv`, we will only have to type pd instead of the full name, pandas. We will also import the `os` library to make sure our working directory is set properly.
 
 ```python
 import pandas as pd
 ```
 
-Let's also import the OS library. This library will allow us to make sure we are in the correct working directory.[More about the OS Library](https://docs.python.org/2/library/os.html)
+Let's also import the OS library. This library will allow us to make sure we are in the correct working directory.[More about the OS Library](https://docs.python.org/2/library/os.html). If you are working in ipython notebook, be sure to start the notebook in the workshop repository. If you didn't do that you can always set the working directory using the code below.
 
+```python	
 	import OS
 	os.getcwd()
-	#if this directory isn't right, use the command below to set the working directory!
+	#if this directory isn't right, use the command below to set the working directory
 	os.chdir(YOURPathHere)
-	
+```	
 
 ```python
 #note the pd.read_csv is used because we imported pandas as pd
@@ -104,9 +103,9 @@ The above command yields the **output** below:
 ...
 [35549 rows x 8 columns]
 ```
-We could see, that there were 33549 rows parsed, each of them consisting 8 columns. Our call to the read_csv function in Pandas `pd.read_csv` read our file properly. However, we haven't saved any data to memory so we can work with it, in Python. We need to assign the dataframe to a variable. Remember that a variable is  a name for a value, such as `x`, or  `data`. We can create a new variable simply by assigning a value to it using `=`. 
+We can see, that there were 33,549 rows parsed. Each row has 8 associated columns. It looks like  the `read_csv` function in Pandas read our file properly. However, we haven't saved any data to memory so we can work with it. We need to assign the DataFrame to a variable. Remember that a variable is a name for a value, such as `x`, or  `data`. We can create a new variable simply by assigning a value to it using `=`. 
 
-Let's call the imported survey data, `dat`: 
+Let's call the imported survey data, "dat": 
 
 ```python
 dat = pd.read_csv("data/surveys.csv")
@@ -176,11 +175,18 @@ sex           object
 wgt          float64
 dtype: object
 ```
-#WE SHOULD SOMEHOW OVERVIEW WHAT ALL OF THESE DATA TYPES ARE WITH EXAMPLES -- e.g. integer, 1,2,3, Float 234.35, 4665,34, 1.000 , etc. 
+
+Note the types associated with each column in our data. Most of the columns are of type `int64`. This means that they are 64 bit integers. Integer means that the column can not store decimal places. And the 64 part simply refers to the range of values that can be stored in each cell as follows:
+
+* Int16: -32,768 to +32,767
+* Int32: -2,147,483,648 to +2,147,483,647
+* Int64: -9,223,372,036,854,775,808 to +9,223,372,036,854,775,807
+
+The other columns are objects. Tthey contain strings or character data.
 
 ### Useful Ways to View DataFrame objects in Python
 
-There are multiple methods that can be used to summarize and access the data stored in dataframes. Let's try out a few. Note that we call the method by using the object name `dat.method`. So `dat.columns` provides an index of all of the column names in our dataframe. Try out some of the other methods below.  
+There are multiple methods that can be used to summarize and access the data stored in dataframes. Let's try out a few. Note that we call the method by using the object name `dat.method`. So `dat.columns` provides an index of all of the column names in our DataFrame. Try out some of the other methods below.  
 
 #### Useful methods
 * `dat.columns` - Display DataFrame column names
@@ -188,16 +194,16 @@ There are multiple methods that can be used to summarize and access the data sto
 * `dat.tail()` - Display last 5 rows
 * `dat.shape` - Display the shape (number of rows and columns, of the Object in a tuple format (rows, columns). [More on tuples, here](https://docs.python.org/2/tutorial/datastructures.html#tuples-and-sequences).
 
-#NOTE - we don't talk about TUPLES DO WE???
+#NOTE - we don't talk about TUPLES ###############################
 
 
-# NEED __EXERCISES__
+# NEED CHALLENGE __EXERCISES__
 
 
 ## Calculating Statistics From Data In A Pandas DataFrame
 
 
-We've read our data into Python, so that we can do some analytics with it. Next, let's perform some quick summary statistics to learn more about what we're working with! We might for instance want to know how many animals we trapped in each plot, or how many of each species were caught.
+We've read our data into Python, so that we can do some analytics with it. Next, let's perform some quick summary statistics to learn more about what we're working with. We might for instance want to know how many animals we trapped in each plot, or how many of each species were caught.
 
 If you forget the column names in your data, you can type:
 
@@ -213,7 +219,7 @@ array(['record_id', 'month', 'day', 'year', 'plot', 'species', 'sex', 'wgt'], dt
 
 
 Let's get a list of all the species.
-The pandas.unique function tells us all the unique names in that column.
+The `pd.unique` function tells us all of the unique names in that column.
 
 ```python
 pd.unique(dat.species)
@@ -228,6 +234,52 @@ which gives **output**:
        	  'PB', 'PL', 'PX', 'CT', 'US'], dtype=object)
 
 
+#Groups in Pandas
+
+We often want summary statistics calculated on subsets of our data. For example, we might want to calculate the average weight per plot. To do this, we use the `.groupby` method in pandas. Once we've created a groupby dataFrame, we can quickly calculate summary statistics by group. 
+
+	#Group data by sex
+	sorted = df.groupby('sex')
+	#summary statistics for all numeric columns by sex
+	byPlot.describe()
+	#provide the mean for each numeric column by sex
+	byPlot.mean()
+	
+
+**OUTPUT:**
+
+```python
+        record_id        day         year       plot        wgt
+sex                                                            
+F    18036.412046  16.007138  1990.644997  11.440854  42.170555
+M    17754.835601  16.184286  1990.480401  11.098282  42.995379
+P    22488.000000  21.000000  1995.000000   8.000000  13.000000
+R    21704.000000  12.000000  1994.000000  12.000000        NaN
+Z    23839.000000  15.000000  1996.000000   3.000000  18.000000
+
+```
+
+What is returned here is a set of average values for each of our columns for each of our groups. What this also tells us is that there are some weird extra values in this column that we might  need to explore further. Unless we're working with butterflies, Z is unlikely to be a sex. This is why it's important to explore your data, before diving into analysis too quickly!
+
+Let's create some more summary stats, this time by plot.
+
+	#let's group by plot
+	byPlot = dat.groupby('plot')
+	byPlot['wgt'].describe()
+
+**A Snipped of the Output look like:**
+
+	plot       
+	1     count    1903.000000
+	      mean       51.822911
+	      std        38.176670
+	      min         4.000000
+	      25%        30.000000
+	      50%        44.000000
+	      75%        53.000000
+	      max       231.000000
+
+
 Now let's see how many of each species we have. To do this, we can use the `nunique()` method which return a pandas SERIES of unique elements in the data and a n associated count of how many rows containing that unique element appear in the DataFrame.
 
 ```python
@@ -240,14 +292,23 @@ We can assign that series to a variable, to make it easier to work with.
 species_table = dat.record_id.groupby(dat.species).nunique()
 ```
 
+Or, we can count just the rows that have the species "DO":  
+
+```python
+dat.record_id.groupby(dat['species']).nunique()['DO']
+```
+
 
 ## Quick & Easy Plotting Data From Pandas
-We can plot it too.
+We can plot our summary stats, too.
 
 	#make sure figures appear inline
 	%matplotlib inline
 	#create a quick bar chart
 	species_table.plot(kind='bar');
+
+![Weight by Species Plot](images/weightBySpecies.png)
+Weight by species plot
 
 We can also look at how many animals were captured in each plot
 
@@ -256,6 +317,13 @@ total_count=dat.record_id.groupby(dat['plot']).nunique()
 #let's plot that too
 total_count.plot(kind='bar');
 ```
+
+# Challenge Activities:
+############## have to work through actually doing #3!! not sure how the pandas charts wants the data organized
+
+1. Create a plot of average weight across all species per plot
+2. Create a plot of total males versus total females for the entire dataset
+3. 	now create a stacked bar plot that has male vs female for each plot 
 
 
 Next, let's perform some actual calculations on the data. 
@@ -285,7 +353,7 @@ max        280.000000
 dtype: float64
 ```
 
-We can also extract these statistics individual using the syntax below:
+We can also extract these statistics individually using the syntax below:
 
 ```python
 dat['wgt'].min()
@@ -301,9 +369,9 @@ dat['wgt'].count()
 
 ## Statistics on subsets of data
 
-When analyzing data we often want to look at summary statistics, for subsets of our samples. for instance, we might want to look at the maximum weight per species or the average weight per plot.
+When analyzing data we often want to look at summary statistics, for subsets of our samples. For instance, we might want to look at the maximum weight per species or the average weight per plot.
 
-One way to do this is to select the data we want to create a new temporary DataFrame.
+One way to do this is to select the data we want to create a new temporary DataFrame. Let's first build our query. Let's find records that are for the species "DO". To do this, we need to first build the query:  `dat.species == 'DO'`. Now, we need to find the rows in our dataFrame that contain DO. to do that we use the syntax `dat[dat.species == 'DO']`. Using this syntax, we are asking Python to pull out all rows where dat.species = DO. 
 
 ```python
 a=dat[dat.species == 'DO']
@@ -313,27 +381,29 @@ len(a)
 
 The `len` function allows us to determine the length or number of entries that match the `species='DO'` criteria. 3027 individuals collected were of species 'DO'.
 
-We can also quickly query the data to see how many DO entries are in our dataset. 
+#Python Syntax Cheat Sheet 
+* Equals: `==`
+* Greater than, less than: `>` or `<`
+* Not equals: `!=`
+* Greater than or equal to `>=`
+* Less than or equal to `<=`
 
-```python
-dat.record_id.groupby(dat['species']).nunique()['DO']
-```
-
-Finally, we might want to calculate some plot level summary values.
-
-
-	byPlot = dat.groupby('plot')
-	byPlot['wgt'].describe()
 
 
 
 ## Challenge Activities
 
-# have to work through actually doing #3!! not sure how the pandas charts wants the data organized
+1. You can use double equal signs `==` as for equal to in python. Use `!=` for no equal to. 
 
-1. Create a plot of average weight across all species per plot
-2. Create a plot of total males versus total females for the entire dataset
-3. 	now create a stacked bar plot that has male vs female for each plot 
+	Select a subset of rows in the dat DataFrame that represent data from the year, 2002. 
+	
+	Now, select a subset of rows in the dat DataFrame that represent data from all years EXCEPT 2002. 
+
+2. You can also combine queries to search for and extract a range of values using the query syntax:
+	`(dat.year>=1980) & (dat.year<=1985)`
+	Create an objected called years that contains all rows that contain data between the years of 1990 and 1995. 
+	
+
 
 
 ##############
