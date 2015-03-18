@@ -1,3 +1,5 @@
+# THIS ACTIVITY NEEDS TO BE REASSESSED -- ALSO NEED TO COMPARE LESSON 05 TO LESSON 01 AND 02 FOR REDUNDANCY!
+
 # Extracting and Viewing Slices of our DataFrame - Indexing & Slicing in Python
 We often want to work with subsets of our  **DataFrame** object. There are different ways to accomplish this, using labels (column headings, numeric ranges, or specific x,y index locations). 
 

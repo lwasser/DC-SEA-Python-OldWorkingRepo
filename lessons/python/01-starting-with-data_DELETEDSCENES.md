@@ -170,3 +170,22 @@ Finally, we might want to weight  data is in a vector, when we want to know how 
 ```python
 len(dat['wgt'])
 ```
+# DO WE NEED THIS IF THEY HAVE PANDAS INSTALLED? Should we check to see if pandas is installed.
+#also if they are using anaconda it might need to be conda install pandas. i think this belongs in the workshop overview.
+
+### Installing pandas
+
+If you use pip installing pandas should be easy:
+
+```
+[user@host:python]$sudo pip install pandas
+```
+
+For more complex scenarios, please see the [installation instructions](http://pandas.pydata.org/pandas-docs/stable/install.html).
+
+To start working with pandas user should open ipython shell in folder with python lessons
+
+```
+[user@host:python]$ipython
+```
+

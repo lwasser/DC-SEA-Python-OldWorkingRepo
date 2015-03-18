@@ -1,4 +1,4 @@
-# Working With Dataframes in Python
+# Working With Pandas DataFrames in Python
 
 
 ### Learning Objectives
@@ -10,7 +10,7 @@
 * Perform mathematical operations on numeric data.
 * Create simple plots of data
 
-# there are a LOT of objectives up there... i didn't see the objective below and also am NOT Inclined to add it. i think this should be it's own activate.
+# there are a LOT of objectives up there! Too many??
 
 ##About Libraries
 A library in Python, contains a set of tools (called functions) that perform tasks on our data. Importing a library is like getting a piece of lab equipment out of a storage locker and setting it up on the bench for use in a project. Once a library is setup, it can be used or called to perform many tasks.
@@ -53,28 +53,6 @@ The first few rows of our first file look like this:
 3. Plot the average weights by species ((IS THIS RIGHT??)
 
 We can automate this process above, using Python programming! It's efficient to spend this time building the code to perform these tasks because once it's built, we can use it over and over on different datasets that use a similar format! This makes our methods easily reproducible.  
-
-
-# DO WE NEED THIS IF THEY HAVE PANDAS INSTALLED? Should we check to see if pandas is installed.
-#also if they are using anaconda it might need to be conda install pandas. i think this belongs in the workshop overview.
-
-### Installing pandas
-
-If you use pip installing pandas should be easy:
-
-```
-[user@host:python]$sudo pip install pandas
-```
-
-For more complex scenarios, please see the [installation instructions](http://pandas.pydata.org/pandas-docs/stable/install.html).
-
-To start working with pandas user should open ipython shell in folder with python lessons
-
-```
-[user@host:python]$ipython
-```
-
-
 
 # Reading Data Using Pandas CSV
 We will begin by locating and reading our survey data. The data are in CSV format. We can use Pandas `read_csv` function to pull the file directly into a [DataFrame](http://pandas.pydata.org/pandas-docs/stable/dsintro.html#dataframe). 
