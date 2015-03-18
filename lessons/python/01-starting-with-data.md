@@ -3,28 +3,29 @@
 
 ### Learning Objectives
 * Explain what a library is, and what libraries are used for.
-* Load a Python/pandas library and use the things it contains.
-* Read tabular data from a file into a program.
-* Assign values to variables.
-* Learn about data types
-* Select individual values and subsections from data.
-* Perform operations on arrays of data.
-* Display simple graphs.
+* Load a Python/pandas library
+* Read tabular data from a file into Python using Pandas using `read_csv`
+* Learn about the Pandas DataFrame object 
+* Learn about data slicing and indexing  
+* Perform mathematical operations on numeric data.
+* Create simple plots of data
+
+# there are a LOT of objectives up there... i didn't see the objective below and also am NOT Inclined to add it. i think this should be it's own activate.
 
 ##About Libraries
-A library in Python, contains a set of tools (called functions) that perform tasks that we might want to complete on our data. Importing a library is like getting a piece of lab equipment out of a storage locker and setting it up on the bench for use in analysis. Once it's setup, the library can be used or called to perform many tasks for us.
+A library in Python, contains a set of tools (called functions) that perform tasks on our data. Importing a library is like getting a piece of lab equipment out of a storage locker and setting it up on the bench for use in a project. Once a library is setup, it can be used or called to perform many tasks.
 
 ##Pandas in Python
-One of the best options for working with tabular data in python, is to use the [Python Data Analysis Library](http://pandas.pydata.org/) (a.k.a. pandas) library. The Pandas library provides data structures, produces high quality plots with [matplotlib](http://matplotlib.org/), and integrates nicely with other libraries that expect [NumPy](http://www.numpy.org/) arrays.
+One of the best options for working with tabular data in python is to use the [Python Data Analysis Library](http://pandas.pydata.org/) (a.k.a. pandas) library. The Pandas library provides data structures, produces high quality plots with [matplotlib](http://matplotlib.org/), and integrates nicely with other libraries that expect [NumPy](http://www.numpy.org/) arrays.
 
-Python doesn't load all of the libraries available to it by default. We have to add an import statement to our code prior to called the functions within the library first. To do this, we use the syntax `import` libraryName `as` nickNameHere you want.  
+Python doesn't load all of the libraries available to it by default. We have to add an import statement to our code in order to use library functions. To import a library, we use the syntax `import` libraryName. If we want to give the library a nickname to shorted the command, we can add `as nickNameHere`.  An example of importing the pandas library using the common nickname `pd` is below.
 
 
 ```python
 import pandas as pd
 ```
 
-In the example above, we have imported pandas as pd. `pd` a nice shortcut so we don't have to type out `pandas` each time we call a pandas function. Anytime we want to call a pandas function we can type `pd.FunctionName`
+In the example above, we have imported pandas as pd. `pd` a nice shortcut so we don't have to type out `pandas` each time we call a pandas function. Anytime we want to call a pandas function we can type `pd.FunctionName` instead of `Pandas.FunctionName`.
 
 
 ##Lesson Overview
@@ -76,22 +77,27 @@ To start working with pandas user should open ipython shell in folder with pytho
 
 
 # Reading Data Using Pandas CSV
-We will begin by locating and reading our data. The data are in CSV format so we can use pandas' `read_csv` function to pull it directly into a [DataFrame](http://pandas.pydata.org/pandas-docs/stable/dsintro.html#dataframe). A dataframe is a 2-dimensional data structure that can store data of different types in columns. It is similar to spreadsheets or SQL tables or the `data.frame` in R. It can store a mix of data types, including characters, integers, floating point values, factors and more. 
+We will begin by locating and reading our survey data. The data are in CSV format. We can use Pandas `read_csv` function to pull the file directly into a [DataFrame](http://pandas.pydata.org/pandas-docs/stable/dsintro.html#dataframe). 
 
-Let's begin by loading the `surveys.csv` file into python. 
+##So What's a DataFrame?
+A dataframe is a 2-dimensional data structure that can store data of different types in columns. It is similar to spreadsheets or SQL tables or the `data.frame` in R. It can store a mix of data types, including characters, integers, floating point values, factors and more. 
+
+Let's read the `surveys.csv` file into a python Pandas DataFrame. 
 
 #DIRECTORIES NEED TO BE SET FOR THIS TO WORK PROPERLY -- I DID THIS IN SOFTWARE CARPENTRY _ SHOULD WE DO THIS HERE??
 
-First, let's make sure the python Pandas library is loaded. It's common practice to load the pandas library using the name `pd`. If we do that, then each time we use a pandas function, like read_csv, we will only have to type pd instead of the full name, pandas.
+First, let's make sure the python Pandas library is loaded. We will import Pandas using the nickname `pd`. Each time we use a pandas function, like `read_csv`, we will only have to type pd instead of the full name, pandas.
 
 ```python
 import pandas as pd
 ```
 
-Let's also import the OS library. This library will allow us to make sure we are in the correct working directory.
+Let's also import the OS library. This library will allow us to make sure we are in the correct working directory.[More about the OS Library](https://docs.python.org/2/library/os.html)
 
 	import OS
 	os.getcwd()
+	#if this directory isn't right, use the command below to set the working directory!
+	os.chdir(YOURPathHere)
 	
 
 ```python
@@ -120,9 +126,9 @@ The above command yields the **output** below:
 ...
 [35549 rows x 8 columns]
 ```
+We could see, that there were 33549 rows parsed, each of them consisting 8 columns. Our call to the read_csv function in Pandas `pd.read_csv` read our file properly. However, we haven't saved any data to memory so we can work with it, in Python. We need to assign the dataframe to a variable. Remember that a variable is  a name for a value, such as `x`, or  `data`. We can create a new variable simply by assigning a value to it using `=`. 
 
-
-Let's call the imported data `dat`: 
+Let's call the imported survey data, `dat`: 
 
 ```python
 dat = pd.read_csv("data/surveys.csv")
@@ -192,83 +198,30 @@ sex           object
 wgt          float64
 dtype: object
 ```
-#WE SHOULD SOMEHOW OVERVIEW WHAT ALL OF THESE THINGS ARE. 
+#WE SHOULD SOMEHOW OVERVIEW WHAT ALL OF THESE DATA TYPES ARE WITH EXAMPLES -- e.g. integer, 1,2,3, Float 234.35, 4665,34, 1.000 , etc. 
 
 ### Useful Ways to View DataFrame objects in Python
 
 There are multiple methods that can be used to summarize and access the data stored in dataframes. Let's try out a few. Note that we call the method by using the object name `dat.method`. So `dat.columns` provides an index of all of the column names in our dataframe. Try out some of the other methods below.  
 
 #### Useful methods
-* `dat.columns` - names of columns
-* `dat.head()` - displays 5 first rows
-* `dat.tail()` - displays 5 last rows
-* `dat.shape` - gives shape of  data in tuple (rows, columns)
+* `dat.columns` - Display DataFrame column names
+* `dat.head()` - Display first 5 rows of DataFrame
+* `dat.tail()` - Display last 5 rows
+* `dat.shape` - Display the shape (number of rows and columns, of the Object in a tuple format (rows, columns). [More on tuples, here](https://docs.python.org/2/tutorial/datastructures.html#tuples-and-sequences).
+
+#NOTE - we don't talk about TUPLES DO WE???
 
 
-# Indexing in Python
-If we want to get a single value from the **DataFrame** object we must provide an index to it in square brackets and use iloc function.
-
-```python
-dat.iloc[2,6]
-```
-
-which gives **output**
-```
-'F'
-```
-
-You have to remember that in Python indexing run from 0. Index like (2, 6) selects a single element of an array. We can also select whole sections as well. For example, we can select month, day and year (columns form second to fourth) of values for the first three rows(rows) like this:
-
-```python
-dat.iloc[0:3, 1:4]
-```
-which gives **output**
-```
-   month  day  year
-0          1      7   16  1977
-1          2      7   16  1977
-2          3      7   16  1977
-```
-
-Slice 1:3 means "Start at index 1 and go to index 3, but not include values at index 4".
-
-We can also use built-in function range to take regurally spaced rows and columns.
-In this example we get rows 1, 3 and column 1, 3 and 5
-
-```python
-dat.iloc[range(1, 7, 2), range(1, 7, 2)]
-```
-
-which gives **output**
-```
-   month  year species
-1      8  1977      DM
-3      8  1977      DM
-```
-
-__EXERCISES__
+# NEED __EXERCISES__
 
 
-## Calculating statistics
+## Calculating Statistics From Data In A Pandas DataFrame
 
 
-We've gotten our data in Python, so that we can do some analytics with it.
-First, let's get a sense of our data in file surveys.csv
-We might for instance want to know how many animals we trapped in each plot, or how many of each species were caught.
-We can look at one column in diifferent ways. We can refere tha column by its number:
+We've read our data into Python, so that we can do some analytics with it. Next, let's perform some quick summary statistics to learn more about what we're working with! We might for instance want to know how many animals we trapped in each plot, or how many of each species were caught.
 
-```python
-dat.iloc[:,7]
-```
-
-or by name:
-
-```python
-dat.month
-dat['month']
-```
-
-If you forget the column names, you can type
+If you forget the column names in your data, you can type:
 
 ```python
 dat.columns.values
@@ -281,33 +234,61 @@ array(['record_id', 'month', 'day', 'year', 'plot', 'species', 'sex', 'wgt'], dt
 ```
 
 
-So, let's get a list of all the species.
+Let's get a list of all the species.
 The pandas.unique function tells us all the unique names in that column.
 
 ```python
-pandas.unique(dat.species)
+pd.unique(dat.species)
 ```
 
-Now let's see how many of each species we have:
+which gives **output**:
+
+	array(['NL', 'DM', 'PF', 'PE', 'DS', 'PP', 'SH', 'OT', 'DO', 'OX', 'SS',
+    	   'OL', 'RM', nan, 'SA', 'PM', 'AH', 'DX', 'AB', 'CB', 'CM', 'CQ',
+    	   'RF', 'PC', 'PG', 'PH', 'PU', 'CV', 'UR', 'UP', 'ZL', 'UL', 'CS',
+       	   'SC', 'BA', 'SF', 'RO', 'AS', 'SO', 'PI', 'ST', 'CU', 'SU', 'RX',
+       	  'PB', 'PL', 'PX', 'CT', 'US'], dtype=object)
+
+
+Now let's see how many of each species we have. To do this, we can use the `nunique()` method which return a pandas SERIES of unique elements in the data and a n associated count of how many rows containing that unique element appear in the DataFrame.
 
 ```python
 dat.record_id.groupby(dat.species).nunique()
 ```
 
-We could even assign it to a variable and make it a DataFrame to make it easier to look at:
+We can assign that series to a variable, to make it easier to work with.
 
 ```python
 species_table = dat.record_id.groupby(dat.species).nunique()
 ```
 
-Maybe we also want to see how many animals were captured in each plot
+
+## Quick & Easy Plotting Data From Pandas
+We can plot it too.
+
+	#make sure figures appear inline
+	%matplotlib inline
+	#create a quick bar chart
+	species_table.plot(kind='bar');
+
+We can also look at how many animals were captured in each plot
 
 ```python
-dat['plot'].groupby(dat.species).nunique()
+total_count=dat.record_id.groupby(dat['plot']).nunique()
+#let's plot that too
+total_count.plot(kind='bar');
 ```
 
-Now we want to do some actual calculations with the data though.
-Let's calculate the average weight of all the animals. Python pandas has a finction describe, that give a lot of statistical informations, like mean, median, max, min, std and count. Describe can be olny used on numeric column.
+
+Next, let's perform some actual calculations on the data. 
+
+##Basic Math Functions
+If we wanted to, we could perform math on an entire column of our data. For example we might multiple weight by 2. A more practical use of this might be to normalize the data according to a mean, area, or some other value.
+
+	#multiply all weight values by 2
+	dat['wgt']*2
+
+Let's calculate the average weight of all of the animals recorded in the data. To calculate average weight, we can use the Pandas function function `describe`. The describe function will return descriptive stats including: mean, median, max, min, std and count for a particular column in the data. Pandas `describe` function can be only used on a column containing numeric data.
 
 ```python
 dat['wgt'].describe()
@@ -326,7 +307,7 @@ max        280.000000
 dtype: float64
 ```
 
-Also we can use just one of this functions:
+We can also extract these statistics individual using the syntax below:
 
 ```python
 dat['wgt'].min()
@@ -337,26 +318,45 @@ dat['wgt'].count()
 ```
 
 
-Because data is in a vector, when we want to know how much of something we have we ask how long it is with the len() function.
+# need some challenges in here!!  __EXERCISES__
 
-```python
-len(dat['wgt'])
-```
 
 ## Statistics on subsets of data
 
-When analyzing data, though, we often want to look at partial statistics, such as the maximum value per species or the average value per plot.
-One way to do this is to select the data we want to create a new temporary array.
+When analyzing data we often want to look at summary statistics, for subsets of our samples. for instance, we might want to look at the maximum weight per species or the average weight per plot.
+
+One way to do this is to select the data we want to create a new temporary DataFrame.
 
 ```python
-dat[dat.species == 'DO']
+a=dat[dat.species == 'DO']
+#find out how many individuals are of type 'DO'
+len(a)
 ```
 
-We could see in our table from before that 'DO' had 3027 species.
-Let's check to see if that's what we have by checking the number of rows:
+The `len` function allows us to determine the length or number of entries that match the `species='DO'` criteria. 3027 individuals collected were of species 'DO'.
+
+We can also quickly query the data to see how many DO entries are in our dataset. 
 
 ```python
 dat.record_id.groupby(dat['species']).nunique()['DO']
 ```
 
-## FUNCTIONS
+Finally, we might want to calculate some plot level summary values.
+
+
+	byPlot = dat.groupby('plot')
+	byPlot['wgt'].describe()
+
+
+
+## Challenge Activities
+
+# have to work through actually doing #3!! not sure how the pandas charts wants the data organized
+
+1. Create a plot of average weight across all species per plot
+2. Create a plot of total males versus total females for the entire dataset
+3. 	now create a stacked bar plot that has male vs female for each plot 
+
+
+##############
+# is this too long or is it ok?

@@ -119,3 +119,54 @@ which gives **output**
 [100]
 [100, 80]
 ```
+
+
+
+# removing the range stuff too-- not relevant in my opinion
+#is the stuff below needed? i think it could be confusing. what is the use case for selecting data in this manner?
+
+##Slicing Data Using The Range Function
+We can also use built-in function [range](http://www.pythoncentral.io/pythons-range-function-explained/) to take regularly spaced rows and columns. The range function tells python to select a set of values using the following format (startingValue, EndingValue, Step). 
+
+What happens when you run `range(2,6,2)` in python? 
+
+In the example below, we get rows with the index value of 1, 3, 5 and columns with the index value 1, 3 and 5.
+
+```python
+dat.iloc[range(1, 7, 2), range(1, 7, 2)]
+```
+
+which gives **output**
+```
+   month  year species
+1      8  1977      NL
+3      8  1977      DM
+5	7   1977	   PF
+```
+
+
+# ASK MARIELA about this... you get the datatype back without this too... maybe we can cut this?
+
+Selection with .ix method
+
+Return the column in question and its data type. Format is [row, column] add in what inputs are, etc
+
+
+	dat.ix[:,'species']
+
+You can also set variables to your subset of data. this will be a series
+
+	surveys_species=dat.ix[:,'species']
+
+More slicing
+ 
+surveys.ix[100,['species', 'wgt']]
+
+
+
+# THIS IS A REALLY RANDOM ADDITION -- pulling it for now...it should be introduced with the shape element
+Finally, we might want to weight  data is in a vector, when we want to know how much of something we have we ask how long it is with the len() function.
+
+```python
+len(dat['wgt'])
+```

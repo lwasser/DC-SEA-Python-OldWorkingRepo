@@ -1,127 +1,91 @@
-#Indexing and Selecting
-
-We often want to select subsets of data frames and other data types in Python. To select portions of a data type in python, we need to tell python what parts - what columns and or rows - or elements we want to select. We call this process of "indexing" or slicing our data.
-
-#maybe use a series with an index as an example
+# Extracting and Viewing Slices of our DataFrame - Indexing & Slicing in Python
+We often want to work with subsets of our  **DataFrame** object. There are different ways to accomplish this, using labels (column headings, numeric ranges, or specific x,y index locations). 
 
 
-##Slicing strings
+##Selecting Data Using Labels (Column Headings)
 
-A section of an array is called a slice. We can take slices of character strings as well:
+We use square brackets `[]` to select a subset of an Python object. For example, we can select a column within the surveys dataframe by name:
 
-	element = 'oxygen'
-	print 'first three characters:', element[0:3]
-	print 'last three characters:', element[3:6]
-
-
-Output:
-
-	first three characters: oxy
-	last three characters: gen
-
-What is the value of element[:4]? What about element[4:]? Or element[:]?
-
-What is element[-1]? What is element[-2]? Given those answers, explain what element[1:-1] does.
-
-#0 based Indexing
-It is important to note that Python follows what's known as 0 based indexing. this means that the first element in an object is located at position `0`. This is different from other tools like R and Matlab that index objects starting at 1. 
-
-#Add numeric example here...
-
-We will continue to use the surveys dataset that we worked with in the last exercise. Just in case you've closed it, let's reopen it using Pandas.
-
-	#first make sure pandas is loaded
-	import pandas as pd
-	#read in the surveys csv
-	pd.read_csv("data/surveys.csv")
-
-
-##The Basics
-
-We often use square brackets to select a subset of an Python object: `[]`. For example, we can select a column within the surveys dataframe by name:
-
-	surveys['species']
+	dat['species']
+	#the syntax below gives you the same output
+	dat.species
 
 We can also set a variable to be a subset of a dataset we are working with (for example the column containing species data). 
 
-	surveys_species=surveys['species']
+	surveys_species=dat['species']
 
-You can pass a list of columns to [] to select columns in that order. If a column is not contained in the dataframe, an exception will be raised. This is useful for applying a function (like transform) to a subset of your columns.
+We can pass a list of columns to select columns in that order. This is useful for applying a function (like transform) to a subset of your columns.  NOTE: If a column is not contained in the dataframe, an exception (error) will be raised. 
 	
+	#select the species and plot columns from the DataFrame
 	surveys[['species', 'plot']]
 
-You can also access columns within DataFrames as an attribute:
+We can also access columns within DataFrames as an attribute:
 
-	surveys.wgt
+	dat.wgt
 
-##Slicing Ranges
+##Extracting Range based Subsets: Slicing 
 
 Slicing using the [] operator selects a set of rows or columns from a dataframe. When slicing in pandas the start bound and the stop bound are included. data[start:stop]
 
 	#select the first, second and third rows from the surveys variable
-	surveys[0:3]
-
-	surveys[:5]
-
-	surveys[-1:]
-
-
-You can set values using slices
+	dat[0:3]
+	#select the first 5 rows (not including row with the index value of 6)
+	dat[:5]
+	#select the second to last row
+	dat[-1:]
 
 
-	surveys_copy=surveys.copy()
+We can also create new objects by slicing out parts of a DataFrame. 
 
+	#copy the surveys dataframe
+	surveys_copy=dat
+	
+	#set the first three rows of data in the dataframe to 0
 	surveys_copy[0:3]=0
 
-Selection with .ix method
+##Data Slicing in Python
+We can use the same syntax to slice out a subset of data from our DataFrame. For example, we can select month, day and year (columns 2,3 and 4 if we start counting at 1), like this:
 
-Return the column in question and its data type. Format is [row, column] add in what inputs are, etc
+```python
+dat.iloc[0:3, 1:4]
+```
+which gives **output**
+```
+   month  day  year
+0          1      7   16  1977
+1          2      7   16  1977
+2          3      7   16  1977
+```
 
-
-	surveys.ix[:,'species']
-
-You can also set variables to your subset of data. this will be a series
-
-	surveys_species=surveys.ix[:,'species']
-
-More slicing
- 
-surveys.ix[100,['species', 'wgt']]
-
-##Selection by Label
-
-All labels must be in index or a KeyError will be raised. remember that the start bound and the stop bound are included. Integers can be used, but they refer to the index label and not the position.
-
-	surveys.loc[[0,10],:]
-
-	surveys.loc[0,['species', 'plot','wgt']]
-
-Selection by Position
-
-0-based indexing, start bounds included and upper bound excluded. trying to use a non-integer will raise an IndexError
+Notice anything odd about the output above? We asked for a slice that goes from 0:3. Wouldn't that suggest that python would select 4 rows in total? Another unique aspect of python is that when you slice a subset of data from `0:3`, you are actually telling python to start at index 0 and select rows 0,1,2 **up to but not including 3**. This might be confusing at first, but you'll get used to it with time. 
 
 
-	surveys.iloc[:3]
+## Index based subsets
 
-integer slicing
+We can also select specific ranges of our data in both the row and column direction using the `loc` and `iloc` arguments. The `loc' argument allows you to select data using labels AND numeric integer locations. `iloc` only allows you to select ranges using labels, `loc` only accepts integer index values.
 
-	surveys.iloc[0:10, 4:6]
+NOTE: Index values and labels must be in the DataFrame or you will get a KeyError. Remember that the start bound and the stop bound are included. When using `loc` Integers can be used, but they refer to the index label and not the position.
 
-slicing rows
-
-
-	surveys.iloc[0:3,:]
-
-slicing columns
-
-	surveys.iloc[:, 0:5]
-
-integer lists
+	#select all columns for rows of index values 0 and 10
+	dat.loc[[0,10],:]
+	#what does this do?
+	dat.loc[0,['species', 'plot','wgt']]
+	
+	#What happens when you type the code below?
+	dat.loc[[0,10,35549],:]
 
 
-	surveys.iloc[[2,4,6],[1,3,5]]
+To do this, we need to provide an index that specifies what part of the data frame we'd like to extract. We can ask for a data value according to the row and column location of the value within the data frame using the `iloc` function: `dat.iloc[row,column]`.
 
-can pull out a specific data point
 
-	surveys.iloc[7,156]
+```python
+dat.iloc[2,6]
+```
+
+which gives **output**
+```
+'F'
+```
+
+Remember that Python indexing begins at 0. So, the index location [2, 6] selects the element that is 3 rows down and 7 columns over in the DataFrame. 
 
