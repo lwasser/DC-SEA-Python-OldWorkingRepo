@@ -107,16 +107,16 @@ The above command yields the **output** below:
 ```
 We can see, that there were 33,549 rows parsed. Each row has 8 associated columns. It looks like  the `read_csv` function in Pandas read our file properly. However, we haven't saved any data to memory so we can work with it. We need to assign the DataFrame to a variable. Remember that a variable is a name for a value, such as `x`, or  `data`. We can create a new object with a variable name by assigning a value to it using `=`. 
 
-Let's call the imported survey data, "dat": 
+Let's call the imported survey data, "surveys_df": 
 
 ```python
-dat = pd.read_csv("data/surveys.csv")
+surveys_df = pd.read_csv("data/surveys.csv")
 ```
 
-Notice when you assign the imported dataframe to a variable, python does not produce any output on the screen. We can print the `dat` object by typing in its name into the python command prompt.
+Notice when you assign the imported dataframe to a variable, python does not produce any output on the screen. We can print the `surveys_df` object by typing in its name into the python command prompt.
 
 ```python
-dat
+surveys_df
 ```
 
 which gives **output**
@@ -142,9 +142,9 @@ which gives **output**
 [35549 rows x 8 columns]
 ```
 
-We can figure out the type of object that dat is by typing:
+We can figure out the type of object that surveys_df is by typing:
 
-	type(dat)
+	type(surveys_df)
 
 OUTPUT:
 
@@ -153,16 +153,16 @@ OUTPUT:
 
 ## Manipulating Our Species Survey Data
 
-Now we can start manipulating our data! First, let's check data type of object that `dat` is using the `type` command. The `type` function and `__class__` attribute tell us that `dat` is `<class 'pandas.core.frame.DataFrame'>` in Python. 
+Now we can start manipulating our data! First, let's check data type of object that `surveys_df` is using the `type` command. The `type` function and `__class__` attribute tell us that `surveys_df` is `<class 'pandas.core.frame.DataFrame'>` in Python. 
 
 ```python
-type(dat)
+type(surveys_df)
 #this does the same thing as the above!
-dat.__class__
+surveys_df.__class__
 ```
-We can also use the `dat.dtypes` command to view the data type within each column in our dataframe. 
+We can also use the `surveys_df.dtypes` command to view the data type for each column in our dataframe. Int64 represents numeric integer values - int64 cells can not store decimals. Object represents strings (letters and numbers). Float64 represents numbers with decimals.  
 
-	dat.dtypes
+	surveys_df.dtypes
 
 which gives **output**:
 
@@ -177,24 +177,17 @@ sex           object
 wgt          float64
 dtype: object
 ```
-
-Note the types associated with each column in our data. Most of the columns are of type `int64`. This means that they are 64 bit integers. Integer means that the column can not store decimal places. And the 64 part simply refers to the range of values that can be stored in each cell as follows:
-
-* Int16: -32,768 to +32,767
-* Int32: -2,147,483,648 to +2,147,483,647
-* Int64: -9,223,372,036,854,775,808 to +9,223,372,036,854,775,807
-
-The other columns are objects. Tthey contain strings or character data.
+We'll talk a bit more about what the different formats mean in a different lesson. 
 
 ### Useful Ways to View DataFrame objects in Python
 
-There are multiple methods that can be used to summarize and access the data stored in dataframes. Let's try out a few. Note that we call the method by using the object name `dat.method`. So `dat.columns` provides an index of all of the column names in our DataFrame. Try out some of the other methods below.  
+There are multiple methods that can be used to summarize and access the data stored in dataframes. Let's try out a few. Note that we call the method by using the object name `surveys_df.method`. So `surveys_df.columns` provides an index of all of the column names in our DataFrame. Try out some of the other methods below.  
 
 #### Useful methods
-* `dat.columns` - Display DataFrame column names
-* `dat.head()` - Display first 5 rows of DataFrame
-* `dat.tail()` - Display last 5 rows
-* `dat.shape` - Display the shape (number of rows and columns, of the Object in a tuple format (rows, columns). [More on tuples, here](https://docs.python.org/2/tutorial/datastructures.html#tuples-and-sequences).
+* `surveys_df.columns` - Display DataFrame column names
+* `surveys_df.head()` - Display first 5 rows of DataFrame
+* `surveys_df.tail()` - Display last 5 rows
+* `surveys_df.shape` - Display the shape (number of rows and columns, of the Object in a tuple format (rows, columns). [More on tuples, here](https://docs.python.org/2/tutorial/datastructures.html#tuples-and-sequences).
 
 #NOTE - we don't talk about TUPLES ###############################
 
@@ -210,7 +203,7 @@ Now, we've read our data into Python. Next, let's perform some quick summary sta
 If you forget the column names in your data, you can type:
 
 ```python
-dat.columns.values
+surveys_df.columns.values
 ```
 
 which gives **output**:
@@ -224,7 +217,7 @@ Let's get a list of all the species.
 The `pd.unique` function tells us all of the unique names in that column.
 
 ```python
-pd.unique(dat.species)
+pd.unique(surveys_df.species)
 ```
 
 which gives **output**:
@@ -265,14 +258,14 @@ Z    23839.000000  15.000000  1996.000000   3.000000  18.000000
 What is returned here is a set of average values for each of our columns for each of our groups. What this also tells us is that there are some weird extra values in this column that we might  need to explore further. Unless we're working with butterflies, Z is unlikely to be a sex. This is why it's important to explore your data, before diving into analysis too quickly!
 
 	#we can sort by multiple columns too
-	sorted2 = dat.groupby(['plot','sex'])
+	sorted2 = surveys_df.groupby(['plot','sex'])
 	#look at means for each group identified above
 	sorted.mean()
 
 Let's create some more summary stats, this time by plot.
 
 	#let's group by plot
-	byPlot = dat.groupby('plot')
+	byPlot = surveys_df.groupby('plot')
 	byPlot['wgt'].describe()
 
 **A Snipped of the Output looks like:**
@@ -291,19 +284,19 @@ Let's create some more summary stats, this time by plot.
 Now let's see how many of each species we have. To do this, we can use the `nunique()` method which return a pandas SERIES of unique elements in the data and a n associated count of how many rows containing that unique element appear in the DataFrame.
 
 ```python
-dat.record_id.groupby(dat.species).nunique()
+surveys_df.record_id.groupby(surveys_df.species).nunique()
 ```
 
 We can assign that series to a variable, to make it easier to work with.
 
 ```python
-species_table = dat.record_id.groupby(dat.species).nunique()
+species_table = surveys_df.record_id.groupby(surveys_df.species).nunique()
 ```
 
 Or, we can count just the rows that have the species "DO":  
 
 ```python
-dat.record_id.groupby(dat['species']).nunique()['DO']
+surveys_df.record_id.groupby(surveys_df['species']).nunique()['DO']
 ```
 
 
@@ -321,7 +314,7 @@ Weight by species plot
 We can also look at how many animals were captured in each plot
 
 ```python
-total_count=dat.record_id.groupby(dat['plot']).nunique()
+total_count=surveys_df.record_id.groupby(surveys_df['plot']).nunique()
 #let's plot that too
 total_count.plot(kind='bar');
 ```
@@ -340,12 +333,12 @@ Next, let's perform some actual calculations on the data.
 If we wanted to, we could perform math on an entire column of our data. For example we might multiple weight by 2. A more practical use of this might be to normalize the data according to a mean, area, or some other value.
 
 	#multiply all weight values by 2
-	dat['wgt']*2
+	surveys_df['wgt']*2
 
 Let's calculate the average weight of all of the animals recorded in the data. To calculate average weight, we can use the Pandas function function `describe`. The describe function will return descriptive stats including: mean, median, max, min, std and count for a particular column in the data. Pandas `describe` function can be only used on a column containing numeric data.
 
 ```python
-dat['wgt'].describe()
+surveys_df['wgt'].describe()
 ```
 gives **output**
 
@@ -364,11 +357,11 @@ dtype: float64
 We can also extract these statistics individually using the syntax below:
 
 ```python
-dat['wgt'].min()
-dat[wgt'].max()
-dat['wgt'].mean()
-dat['wgt'].std()
-dat['wgt'].count()
+surveys_df['wgt'].min()
+surveys_df['wgt'].max()
+surveys_df['wgt'].mean()
+surveys_df['wgt'].std()
+surveys_df['wgt'].count()
 ```
 
 
@@ -389,7 +382,7 @@ plot
 	my_plot.set_ylabel("Weight")
 	
 
-** You can use the command `unstack` to transform grouped data into columns for each plotting. Try the code, `dat.unstack' to see what it yields. 
+** You can use the command `unstack` to transform grouped data into columns for each plotting. Try the code, `surveys_df.unstack' to see what it yields. 
 
 ![Stacked Bar Plot](images/stackedBar.png)
 
@@ -411,12 +404,12 @@ plot
 
 1. You can use double equal signs `==` as for equal to in python. Use `!=` for no equal to. 
 
-	Select a subset of rows in the dat DataFrame that represent data from the year, 2002. 
+	Select a subset of rows in the surveys_df DataFrame that represent data from the year, 2002. 
 	
-	Now, select a subset of rows in the dat DataFrame that represent data from all years EXCEPT 2002. 
+	Now, select a subset of rows in the surveys_df DataFrame that represent data from all years EXCEPT 2002. 
 
 2. You can also combine queries to search for and extract a range of values using the query syntax:
-	`(dat.year>=1980) & (dat.year<=1985)`
+	`(surveys_df.year>=1980) & (surveys_df.year<=1985)`
 	Create an objected called years that contains all rows that contain data between the years of 1990 and 1995. 
 	
 
